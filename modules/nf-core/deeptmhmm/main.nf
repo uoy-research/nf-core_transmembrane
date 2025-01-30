@@ -26,7 +26,11 @@ process DEEPTMHMM {
     def is_compressed = fasta.name.endsWith(".gz")
     def fasta_name = fasta.name.replace(".gz", "")
 
+    // Set a writable cache directory (e.g., inside the working directory)
     """
+    export BIOLIB_CACHE_DIR="\$PWD/biolib_cache"
+    mkdir -p \$BIOLIB_CACHE_DIR
+
     if [ "$is_compressed" == "true" ]; then
         gzip -c -d $fasta > $fasta_name
     fi
