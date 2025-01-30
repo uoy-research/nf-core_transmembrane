@@ -25,10 +25,10 @@ workflow NFCORE_TRANSMEMBRANE {
 
     // Read samplesheet and create proper channel
     ch_fasta = Channel
-        .fromPath(params.input)
+        .fromFile(params.input) // Read the samplesheet file
         .splitCsv(header: true)
         .map { row -> 
-            tuple([ id: row.sequence ], path(row.fasta))
+            tuple([ id: row.sequence ], file(row.fasta)) // Use `file()`
         }
         .set { fasta_channel }
 
