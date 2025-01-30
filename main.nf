@@ -18,9 +18,6 @@ include { DEEPTMHMM } from './modules/nf-core/deeptmhmm'
 
 workflow NFCORE_TRANSMEMBRANE {
     
-    take:
-    samplesheet // Pass input CSV
-
     main:
 
     // Read samplesheet and create proper channel
