@@ -17,15 +17,23 @@ include { DEEPTMHMM } from './modules/nf-core/deeptmhmm'
 */
 
 workflow NFCORE_TRANSMEMBRANE {
-    
+
+    take:
+    input_samplesheet // Define an input channel for the workflow
+
     main:
+
+    // Ensure input is provided
+    if (!params.input) {
+        error "ERROR: No input samplesheet provided! Use --input <samplesheet.csv>"
+    }
 
     // Read samplesheet and create proper channel
     ch_fasta = Channel
-        .fromFile(params.input) // Read the samplesheet file
+        .fromPath(params.input)
         .splitCsv(header: true)
         .map { row -> 
-            tuple([ id: row.sequence ], file(row.fasta)) // Use `file()`
+            tuple([ id: row.sequence ], file(row.fasta)) // Correctly format the tuple
         }
         .set { fasta_channel }
 
@@ -43,6 +51,9 @@ workflow {
 
     main:
 
-    // Run the pipeline workflow
-    NFCORE_TRANSMEMBRANE(params.input)
+    // Create the input channel for the workflow
+    ch_input = Channel.value(params.input)
+
+    // Pass input channel to the workflow
+    NFCORE_TRANSMEMBRANE(ch_input)
 }
