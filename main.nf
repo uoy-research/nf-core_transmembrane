@@ -1,66 +1,41 @@
 #!/usr/bin/env nextflow
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/transmembrane
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/transmembrane
-    Website: https://nf-co.re/transmembrane
-    Slack  : https://nfcore.slack.com/channels/transmembrane
-----------------------------------------------------------------------------------------
-*/
 
 nextflow.enable.dsl = 2
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
+    IMPORT MODULES / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { TRANSMEMBRANE  } from './workflows/transmembrane'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_transmembrane_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_transmembrane_pipeline'
-
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_transmembrane_pipeline'
+include { DEEPTMHMM } from './modules/nf-core/deeptmhmm'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
+    MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// TODO nf-core: Remove this line if you don't need a FASTA file
-//   This is an example of how to use getGenomeAttribute() to fetch parameters
-//   from igenomes.config using `--genome`
-params.fasta = getGenomeAttribute('fasta')
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    NAMED WORKFLOWS FOR PIPELINE
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-//
-// WORKFLOW: Run main analysis pipeline depending on type of input
-//
 workflow NFCORE_TRANSMEMBRANE {
-
+    
     take:
-    samplesheet // channel: samplesheet read in from --input
+    samplesheet // Pass input CSV
 
     main:
 
-    //
-    // WORKFLOW: Run pipeline
-    //
-    TRANSMEMBRANE (
-        samplesheet
-    )
+    // Read samplesheet and create proper channel
+    ch_fasta = Channel
+        .fromPath(params.input)
+        .splitCsv(header: true)
+        .map { row -> 
+            tuple([ id: row.sequence ], path(row.fasta))
+        }
+        .set { fasta_channel }
 
-    emit:
-    multiqc_report = TRANSMEMBRANE.out.multiqc_report // channel: /path/to/multiqc_report.html
-
+    // Call DEEPTMHMM module with formatted channel
+    DEEPTMHMM(fasta_channel)
 }
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -71,42 +46,6 @@ workflow {
 
     main:
 
-    //
-    // SUBWORKFLOW: Run initialisation tasks
-    //
-    PIPELINE_INITIALISATION (
-        params.version,
-        params.help,
-        params.validate_params,
-        params.monochrome_logs,
-        args,
-        params.outdir,
-        params.input
-    )
-
-    //
-    // WORKFLOW: Run main workflow
-    //
-    NFCORE_TRANSMEMBRANE (
-        PIPELINE_INITIALISATION.out.samplesheet
-    )
-
-    //
-    // SUBWORKFLOW: Run completion tasks
-    //
-    PIPELINE_COMPLETION (
-        params.email,
-        params.email_on_fail,
-        params.plaintext_email,
-        params.outdir,
-        params.monochrome_logs,
-        params.hook_url,
-        NFCORE_TRANSMEMBRANE.out.multiqc_report
-    )
+    // Run the pipeline workflow
+    NFCORE_TRANSMEMBRANE(params.input)
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
