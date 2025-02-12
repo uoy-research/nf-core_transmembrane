@@ -4,8 +4,8 @@ process DEEPTMHMM {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pybiolib:1.2.261--pyhdfd78af_0':
-        'quay.io/biocontainers/pybiolib:1.2.270--pyhdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/pybiolib:1.1.1393--pyhdfd78af_0':
+        'biocontainers/pybiolib:1.1.1393--pyhdfd78af_0' }"
 
     input:
     tuple val(meta), path(fasta)
@@ -26,11 +26,7 @@ process DEEPTMHMM {
     def is_compressed = fasta.name.endsWith(".gz")
     def fasta_name = fasta.name.replace(".gz", "")
 
-    // Set a writable cache directory (e.g., inside the working directory)
     """
-    export BIOLIB_CACHE_DIR="\$PWD/biolib_cache"
-    mkdir -p \$BIOLIB_CACHE_DIR
-
     if [ "$is_compressed" == "true" ]; then
         gzip -c -d $fasta > $fasta_name
     fi
