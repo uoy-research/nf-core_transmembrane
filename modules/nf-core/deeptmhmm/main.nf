@@ -40,7 +40,6 @@ process DEEPTMHMM {
     biolib \\
         run \\
         DTU/DeepTMHMM \\
-        --local \\
         --fasta ${fasta_name} \\
         $args
 
