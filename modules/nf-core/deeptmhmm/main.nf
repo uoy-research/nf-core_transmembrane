@@ -29,7 +29,6 @@ process DEEPTMHMM {
     """
     export BIOLIB_CACHE_DIR="/tmp/biolib_cache"
     mkdir -p \$BIOLIB_CACHE_DIR
-    ln -s /users /tmp
 
     if [ "$is_compressed" == "true" ]; then
         gzip -c -d $fasta > $fasta_name
