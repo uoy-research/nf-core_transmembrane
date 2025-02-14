@@ -7,15 +7,17 @@ process DEEPTMHMM {
         'https://depot.galaxyproject.org/singularity/pybiolib:1.1.1393--pyhdfd78af_0':
         'biocontainers/pybiolib:1.1.1393--pyhdfd78af_0' }"
 
+    publishDir "${meta.id}", mode: "copy"
+
     input:
     tuple val(meta), path(fasta)
 
     output:
-    tuple val(meta), path("${meta.id}/TMRs.gff3")                 , emit: gff3
-    tuple val(meta), path("${meta.id}/predicted_topologies.3line"), emit: line3
-    tuple val(meta), path("${meta.id}/deeptmhmm_results.md")      , emit: md
-    tuple val(meta), path("${meta.id}/*_probs.csv")               , optional: true, emit: csv
-    tuple val(meta), path("${meta.id}/plot.png")                  , optional: true, emit: png
+    tuple val(meta), path("biolib_results/TMRs.gff3")                 , emit: gff3
+    tuple val(meta), path("biolib_results/predicted_topologies.3line"), emit: line3
+    tuple val(meta), path("biolib_results/deeptmhmm_results.md")      , emit: md
+    tuple val(meta), path("biolib_results/*_probs.csv")               , optional: true, emit: csv
+    tuple val(meta), path("biolib_results/plot.png")                  , optional: true, emit: png
     path "versions.yml"                                               , emit: versions
 
     when:
