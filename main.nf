@@ -38,7 +38,8 @@ workflow NFCORE_TRANSMEMBRANE {
         .set { fasta_channel }
 
     // Call DEEPTMHMM module with formatted channel
-    DEEPTMHMM(fasta_channel)
+    DEEPTMHMM(fasta_channel,
+    params.outdir)
 }
 
 /*

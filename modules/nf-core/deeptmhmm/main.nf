@@ -7,10 +7,11 @@ process DEEPTMHMM {
         'https://depot.galaxyproject.org/singularity/pybiolib:1.1.1393--pyhdfd78af_0':
         'biocontainers/pybiolib:1.1.1393--pyhdfd78af_0' }"
 
-    publishDir "${meta.id}", mode: "copy"
+    publishDir "$outdir/${meta.id}", mode: "copy"
 
     input:
     tuple val(meta), path(fasta)
+    val outdir
 
     output:
     tuple val(meta), path("biolib_results/TMRs.gff3")                 , emit: gff3
