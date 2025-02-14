@@ -11,11 +11,11 @@ process DEEPTMHMM {
     tuple val(meta), path(fasta)
 
     output:
-    tuple val(meta), path("biolib_results/TMRs.gff3")                 , emit: gff3
-    tuple val(meta), path("biolib_results/predicted_topologies.3line"), emit: line3
-    tuple val(meta), path("biolib_results/deeptmhmm_results.md")      , emit: md
-    tuple val(meta), path("biolib_results/*_probs.csv")               , optional: true, emit: csv
-    tuple val(meta), path("biolib_results/plot.png")                  , optional: true, emit: png
+    tuple val(meta), path("${meta.id}/TMRs.gff3")                 , emit: gff3
+    tuple val(meta), path("${meta.id}/predicted_topologies.3line"), emit: line3
+    tuple val(meta), path("${meta.id}/deeptmhmm_results.md")      , emit: md
+    tuple val(meta), path("${meta.id}/*_probs.csv")               , optional: true, emit: csv
+    tuple val(meta), path("${meta.id}/plot.png")                  , optional: true, emit: png
     path "versions.yml"                                               , emit: versions
 
     when:
@@ -27,13 +27,15 @@ process DEEPTMHMM {
     def fasta_name = fasta.name.replace(".gz", "")
 
     """
+    export BIOLIB_CACHE_DIR="/tmp/biolib_cache"
+    mkdir -p $BIOLIB_CACHE_DIR
+
     if [ "$is_compressed" == "true" ]; then
         gzip -c -d $fasta > $fasta_name
     fi
 
     biolib \\
         run \\
-        --local \\
         DTU/DeepTMHMM \\
         --fasta ${fasta_name} \\
         $args
