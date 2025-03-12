@@ -1,0 +1,10 @@
+name: deeptmhmm
+description: |
+  Module to run DeepTMHMM predictions using the predict.py script.
+  This module executes the DeepTMHMM tool, which predicts transmembrane regions.
+documentation: "https://dtu.biolib.com/DeepTMHMM/"
+author: "Sandy Macdonald <sandyjmacdonald@gmail.com>"
+version: "0.1.0"
+requirements:
+  container: true    # Indicates that a container (Docker/Singularity) is provided/required
+  conda: false       # Set to false if the module isn’t meant to be run with Conda
