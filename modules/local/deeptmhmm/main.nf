@@ -12,36 +12,28 @@ process DEEPTMHMM {
     val outdir
 
     output:
-    tuple val(meta), path("results/TMRs.gff3")                 , emit: gff3
-    tuple val(meta), path("results/predicted_topologies.3line"), emit: line3
-    tuple val(meta), path("results/deeptmhmm_results.md")      , emit: md
-    tuple val(meta), path("results/*_probs.csv")               , optional: true, emit: csv
-    tuple val(meta), path("results/plot.png")                  , optional: true, emit: png
+    tuple val(meta), path("${meta.id}/TMRs.gff3")                 , emit: gff3
+    tuple val(meta), path("${meta.id}/predicted_topologies.3line"), emit: line3
+    tuple val(meta), path("${meta.id}/deeptmhmm_results.md")      , emit: md
+    tuple val(meta), path("${meta.id}/*_probs.csv")               , optional: true, emit: csv
+    tuple val(meta), path("${meta.id}/plot.png")                  , optional: true, emit: png
     path "versions.yml"                                               , emit: versions
 
     script:
     def args = task.ext.args ?: ''
-    // Use the fasta file name directly
     def fasta_name = fasta.name
-
+    // Define the output directory using meta.id
+    def output_dir = "${meta.id}"
+    
     """
-    # Run predict.py using the provided fasta file and output results to the "results" directory
     cd /app
-    python3 predict.py --fasta ${fasta_name} --output-dir results ${args}
+    # Create the output directory with full permissions
+    mkdir -p ${output_dir} && chmod -R 777 ${output_dir}
+
+    # Run predict.py using the provided fasta file and output results to the directory named after meta.id
+    python3 predict.py --fasta ${fasta_name} --output-dir ${output_dir} ${args}
 
     # Write a simple versions file
     echo "predict.py version: 1.0.0" > versions.yml
-    """
-
-    stub:
-    def args = task.ext.args ?: ''
-
-    """
-    mkdir -p results && chmod -R 777 results
-    touch results/TMRs.gff3
-    touch results/predicted_topologies.3line
-    touch results/deeptmhmm_results.md
-    touch results/MX_probs.csv
-    touch results/plot.png
     """
 }
