@@ -37,7 +37,7 @@ process DEEPTMHMM {
     def args = task.ext.args ?: ''
 
     """
-    mkdir results
+    mkdir -p results && chmod -R 777 results
     touch results/TMRs.gff3
     touch results/predicted_topologies.3line
     touch results/deeptmhmm_results.md
