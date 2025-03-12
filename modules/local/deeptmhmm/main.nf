@@ -25,9 +25,6 @@ process DEEPTMHMM {
     def fasta_name = fasta.name
 
     """
-    # Copy the input FASTA to the working directory (if needed)
-    cp ${fasta} ${fasta_name}
-
     # Run predict.py using the provided fasta file and output results to the "results" directory
     python3 predict.py --fasta ${fasta_name} --output-dir results ${args}
 
