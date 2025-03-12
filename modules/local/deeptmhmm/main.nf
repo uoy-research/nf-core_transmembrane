@@ -32,4 +32,16 @@ process DEEPTMHMM {
     # Write a simple versions file
     echo "predict.py version: 1.0.0" > versions.yml
     """
+
+    stub:
+    def args = task.ext.args ?: ''
+
+    """
+    mkdir results
+    touch results/TMRs.gff3
+    touch results/predicted_topologies.3line
+    touch results/deeptmhmm_results.md
+    touch results/MX_probs.csv
+    touch results/plot.png
+    """
 }
