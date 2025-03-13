@@ -26,7 +26,6 @@ process DEEPTMHMM {
     def output_dir = "${meta.id}"
     
     """
-    cd /app
     # Create the output directory with full permissions
     mkdir -p ${output_dir} && chmod -R 777 ${output_dir}
 
