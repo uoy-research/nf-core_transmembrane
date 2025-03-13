@@ -5,7 +5,7 @@ process DEEPTMHMM {
     // Use your Docker Hub image with predict.py
     container 'docker://sandyjmacdonald/deeptmhmm:0.1.0'
 
-    publishDir "$outdir/${meta.id}", mode: "copy"
+    publishDir "$outdir", mode: "copy"
 
     input:
     tuple val(meta), path(fasta)
