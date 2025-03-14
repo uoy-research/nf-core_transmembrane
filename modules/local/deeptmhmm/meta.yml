@@ -4,7 +4,7 @@ description: |
   This module executes the DeepTMHMM tool, which predicts transmembrane regions.
 documentation: "https://dtu.biolib.com/DeepTMHMM/"
 author: "Sandy Macdonald <sandyjmacdonald@gmail.com>"
-version: "0.3.0"
+version: "0.4.0"
 requirements:
   container: true    # Indicates that a container (Docker/Singularity) is provided/required
   conda: false       # Set to false if the module isn’t meant to be run with Conda
