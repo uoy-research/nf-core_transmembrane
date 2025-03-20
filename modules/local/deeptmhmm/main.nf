@@ -3,7 +3,7 @@ process DEEPTMHMM {
     label 'process_single'
 
     // Use your Docker Hub image with predict.py
-    container 'docker://sandyjmacdonald/deeptmhmm:0.9.4'
+    container 'docker://sandyjmacdonald/deeptmhmm:0.9.5'
 
     publishDir "$outdir", mode: "copy"
 
