@@ -3,7 +3,7 @@ process DEEPTMHMM {
     label 'process_single'
 
     // Use your Docker Hub image with predict.py
-    container 'docker://sandyjmacdonald/deeptmhmm:0.9.5'
+    container 'docker://sandyjmacdonald/deeptmhmm:0.9.6'
 
     publishDir "$outdir", mode: "copy"
 
@@ -27,7 +27,7 @@ process DEEPTMHMM {
     
     """
     # Run predict.py using the provided fasta file and output results to the directory named after meta.id
-    deeptmhmm-predict --fasta ${fasta_name} --output-dir ${output_dir} ${args}
+    predict.py --fasta ${fasta_name} --output-dir ${output_dir} ${args}
 
     # Write a simple versions file
     echo "deeptmhmm-predict version: 1.0.0" > versions.yml
