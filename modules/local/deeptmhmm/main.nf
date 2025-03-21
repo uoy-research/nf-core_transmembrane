@@ -27,7 +27,7 @@ process DEEPTMHMM {
     
     """
     # Run predict.py using the provided fasta file and output results to the directory named after meta.id
-    predict.py --fasta ${fasta_name} --output-dir ${output_dir} ${args}
+    python3 -m deeptmhmm.predict --fasta ${fasta_name} --output-dir ${output_dir} ${args}
 
     # Write a simple versions file
     echo "deeptmhmm-predict version: 1.0.0" > versions.yml
